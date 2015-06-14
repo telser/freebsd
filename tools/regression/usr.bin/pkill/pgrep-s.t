@@ -5,33 +5,16 @@ base=`basename $0`
 
 echo "1..2"
 
-name="pgrep -s <sid>"
-sid=`ps -o tsid -p $$ | tail -1`
-sleep=`mktemp /tmp/$base.XXXXXX` || exit 1
-ln -sf /bin/sleep $sleep
-$sleep 5 &
-sleep 0.3
-chpid=$!
-pid=`pgrep -f -s $sid $sleep`
-if [ "$pid" = "$chpid" ]; then
+name="pgrep -S"
+pid=`pgrep -Sx g_event`
+if [ "$pid" = "2" ]; then
 	echo "ok 1 - $name"
 else
 	echo "not ok 1 - $name"
 fi
-kill $chpid
-rm -f $sleep
-
-name="pgrep -s 0"
-sleep=`mktemp /tmp/$base.XXXXXX` || exit 1
-ln -sf /bin/sleep $sleep
-$sleep 5 &
-sleep 0.3
-chpid=$!
-pid=`pgrep -f -s 0 $sleep`
-if [ "$pid" = "$chpid" ]; then
+pid=`pgrep -x g_event`
+if [ "$pid" != "2" ]; then
 	echo "ok 2 - $name"
 else
 	echo "not ok 2 - $name"
 fi
-kill $chpid
-rm -f $sleep
